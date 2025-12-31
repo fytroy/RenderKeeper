@@ -1,0 +1,31 @@
+name: Daily Contribution Bot
+
+on:
+  schedule:
+    # Runs every day at 12:00 UTC
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+# This permission is required to allow the bot to write to your repo
+permissions:
+  contents: write
+
+jobs:
+  auto_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Update activity log
+        # This writes the current date into a file named "last_run.txt"
+        run: |
+          echo "Automated commit: $(date)" >> last_run.txt
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "GitHub Action Bot"
+          git config --global user.email "actions@github.com"
+          git add last_run.txt
+          git commit -m "Daily robot activity 🤖"
+          git push
